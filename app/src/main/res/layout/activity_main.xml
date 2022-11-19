@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/serverIP"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="200dp"
+        android:fontFamily="sans-serif"
+        android:inputType="textPersonName"
+        android:text="192.168.0.101"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:autofillHints="192.168.0.101" />
+
+    <Button
+        android:id="@+id/Connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/serverIP"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="CONNECT" />
+
+    <TextView
+        android:id="@+id/phoneIP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Connect"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="A" />
+
+</RelativeLayout>
