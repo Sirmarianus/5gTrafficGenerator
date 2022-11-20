@@ -2,5 +2,4 @@
     <string name="app_name">5gTrafficGenerator</string>
     <string name="IP_PATTERN" tools:ignore="TypographyDashes">^(?:(?:25[0–5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</string>
     <string name="testing_ongoing">TESTING ONGOING</string>
-    <string name="GOOGLE_API">AIzaSyBN7FbThT836mk4E8lG3TX9AwCa-rVap-I</string>
 </resources>
