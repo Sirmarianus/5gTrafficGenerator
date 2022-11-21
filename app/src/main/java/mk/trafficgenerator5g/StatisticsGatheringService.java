@@ -9,7 +9,6 @@ import android.util.Log;
 
 public class StatisticsGatheringService extends Service {
     private final int THREAD_SLEEP_TIME_SEC = 60;
-    Data data = Data.getInstance();
     long totalRxBytes = TrafficStats.getTotalRxBytes();
     long totalRxPackets = TrafficStats.getTotalRxPackets();
     long totalTxBytes = TrafficStats.getTotalTxBytes();
@@ -21,7 +20,7 @@ public class StatisticsGatheringService extends Service {
         Log.d("DUPA", "StatisticsGatheringService -> START");
         new Thread(
                 () -> {
-                    while (data.shouldThreadsBeGoing) {
+                    while (Data.getShouldThreadsBeGoing()) {
                         SystemClock.sleep(THREAD_SLEEP_TIME_SEC * 1000);
                         getStatistics();
                     }

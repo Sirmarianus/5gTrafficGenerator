@@ -15,12 +15,18 @@ import java.net.Socket;
 
 public class SocketService extends Service {
     private final int THREAD_SLEEP_TIME_SEC = 5;
-    Data data = Data.getInstance();
+    Data data;
     Socket socket;
     PrintWriter out;
     BufferedReader in;
 
     public SocketService() {}
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        data = Data.getInstance();
+    }
 
     private void createSocketConnection() {
         Log.d("DUPA", "SocketService -> RUN");
@@ -34,7 +40,7 @@ public class SocketService extends Service {
             Log.d("DUPA", "C");
         } catch (Exception e) {
             Log.d("DUPA", String.valueOf(e));
-            data.shouldThreadsBeGoing = false;
+            Data.stopServices();
         }
     }
 
@@ -72,7 +78,7 @@ public class SocketService extends Service {
         new Thread(
                 () -> {
                     createSocketConnection();
-                    while (data.shouldThreadsBeGoing) {
+                    while (Data.getShouldThreadsBeGoing()) {
                         SystemClock.sleep(THREAD_SLEEP_TIME_SEC * 1000);
                         sendMessageToServer("DUPA I TEGO TYPU");
                         String msg = receiveMessageFromServer();

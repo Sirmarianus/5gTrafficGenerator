@@ -9,14 +9,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ActivityToStart {
-    String url;
+    String url = "";
     int type;
     LocalDateTime startTime;
     int timeToEnd;
 
-    ActivityToStart() {
-        url = "";
-    }
+    ActivityToStart() {}
     ActivityToStart(String initValues) throws JSONException {
         Log.d("DUPA", "ActivityToStart -> CREATE");
 

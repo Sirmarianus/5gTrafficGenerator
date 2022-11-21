@@ -1,7 +1,6 @@
 package mk.trafficgenerator5g;
 
-import android.content.Context;
-import android.content.Intent;
+import android.util.Log;
 
 import org.json.JSONException;
 
@@ -11,24 +10,28 @@ import java.util.LinkedList;
 public class Data {
 
     public String serverIP;
-    public boolean shouldThreadsBeGoing = true;
+
+    private static boolean shouldThreadsBeGoing = true;
     private final ActivityToStart emptyActivityToStart = new ActivityToStart();
     public static final int APPLICATION_TYPE_CANCEL = 0;
     public static final int APPLICATION_TYPE_YT = 1;
     public static final int APPLICATION_TYPE_CHROME = 2;
     public static final int APPLICATION_TYPE_MAPS = 3;
     public static final int APPLICATION_TYPE_DOWNLOAD = 4;
-    Intent subIntent;
 
     // Singleton stuff
     private final static Data INSTANCE = new Data();
-    public synchronized static Data getInstance(){
-        return INSTANCE;
-    }
+    public synchronized static Data getInstance(){ return INSTANCE; }
+    public static synchronized boolean getShouldThreadsBeGoing() { return shouldThreadsBeGoing; }
+    public static synchronized void stopServices() { shouldThreadsBeGoing=false; }
 
     // Handling messages from Server to app
     private final LinkedList<ActivityToStart> messagesFromServer = new LinkedList<>();
     public synchronized ActivityToStart getOrSetMessageFromServer(boolean isMethodUsedAsGetter, String message) {
+        Log.e("Queue size: ", String.valueOf(messagesFromServer.size()));
+        for (ActivityToStart ele : messagesFromServer) {
+            Log.e("Queue type: ", String.valueOf(ele.type));
+        }
         if (isMethodUsedAsGetter) {
             if (this.messagesFromServer.isEmpty() || messagesFromServer.getFirst().startTime.isAfter(LocalDateTime.now())) {
                 return emptyActivityToStart;
@@ -46,10 +49,13 @@ public class Data {
             }
             addToQueue(activityToStartToBeSet);
             if (activityToStartToBeSet.timeToEnd != 0) {
-                LocalDateTime timeToEnd = activityToStartToBeSet.startTime.plusMinutes(activityToStartToBeSet.timeToEnd);
+                LocalDateTime startTime = activityToStartToBeSet.startTime.plusMinutes(activityToStartToBeSet.timeToEnd);
+
                 activityToStartToBeSet = new ActivityToStart();
+                activityToStartToBeSet.url = "CANCEL";
                 activityToStartToBeSet.type = APPLICATION_TYPE_CANCEL;
-                activityToStartToBeSet.startTime = timeToEnd;
+                activityToStartToBeSet.startTime = startTime;
+                activityToStartToBeSet.timeToEnd = 0;
                 addToQueue(activityToStartToBeSet);
                 clearQueueFromNotNeededStoppers();
             }
@@ -64,9 +70,18 @@ public class Data {
         else {
             if (messagesFromServer.getLast().startTime.isBefore(activityToStartToBeSet.startTime)) {
                 messagesFromServer.addLast(activityToStartToBeSet);
-            } else {
+            }
+            else if (messagesFromServer.getLast().startTime.isEqual(activityToStartToBeSet.startTime)) {
+                activityToStartToBeSet.startTime.plusMinutes(1);
+                messagesFromServer.addLast(activityToStartToBeSet);
+            }
+            else {
                 for (int i = 0; i < messagesFromServer.size(); i++) {
                     if (messagesFromServer.get(i).startTime.isAfter(activityToStartToBeSet.startTime)) {
+                        messagesFromServer.add(i, activityToStartToBeSet);
+                    }
+                    else if (messagesFromServer.get(i).startTime.isEqual(activityToStartToBeSet.startTime)) {
+                        activityToStartToBeSet.startTime.plusMinutes(1);
                         messagesFromServer.add(i, activityToStartToBeSet);
                     }
                 }

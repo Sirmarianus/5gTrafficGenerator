@@ -17,15 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.5gTrafficGenerator"
         tools:targetApi="31">
-        <activity
-            android:name=".YoutubeActivity"
-            android:exported="false"
-            android:label="@string/title_activity_youtube"
-            android:theme="@style/Theme.5gTrafficGenerator.NoActionBar">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
 
         <service
             android:name=".ActivityStartingService"
@@ -41,15 +32,29 @@
             android:exported="true" />
 
         <activity
+            android:name=".YoutubeActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".EmptyActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
 
+    <queries>
+        <intent>
+            <action android:name="com.google.android.youtube.api.service.START" />
+        </intent>
+    </queries>
 </manifest>

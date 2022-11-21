@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Debug;
+import android.os.SystemClock;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.widget.Button;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        Debug.waitForDebugger();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         data = Data.getInstance();
@@ -63,11 +66,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createSomeQueue() {
-        String msg = "{\"index\":\"1\",\"url\":\"https://www.youtube.com/watch?v=CYiGyaJyPMk\",\"type\":\"4\",\"startTime\":\"15:00:00 12-11-2022\",\"time\":\"0\"}";
+        String msg = "";
+        msg = "{\"index\":\"1\",\"url\":\"https://releases.ubuntu.com/22.04.1/ubuntu-22.04.1-desktop-amd64.iso\",\"type\":\"4\",\"startTime\":\"15:00:00 12-11-2022\",\"time\":\"0\"}";
         data.getOrSetMessageFromServer(false, msg);
-        msg = "{\"index\":\"1\",\"url\":\"https://pl.wikipedia.org/wiki/Generator_liczb_losowych\",\"type\":\"2\",\"startTime\":\"15:01:00 12-11-2022\",\"time\":\"0\"}";
+//        msg = "{\"index\":\"1\",\"url\":\"https://pl.wikipedia.org/wiki/Generator_liczb_losowych\",\"type\":\"2\",\"startTime\":\"15:01:00 12-11-2022\",\"time\":\"0\"}";
+//        data.getOrSetMessageFromServer(false, msg);
+        msg = "{\"index\":\"1\",\"url\":\"https://www.youtube.com/watch?v=9qpixGR3A1Y\",\"type\":\"1\",\"startTime\":\"15:00:00 12-11-2022\",\"time\":\"2\"}";
         data.getOrSetMessageFromServer(false, msg);
         msg = "{\"index\":\"1\",\"url\":\"https://www.youtube.com/watch?v=jb3_vnxXEaw\",\"type\":\"1\",\"startTime\":\"15:02:00 12-11-2022\",\"time\":\"2\"}";
+        data.getOrSetMessageFromServer(false, msg);
+        msg = "{\"index\":\"1\",\"url\":\"https://www.youtube.com/watch?v=CYiGyaJyPMk\",\"type\":\"1\",\"startTime\":\"15:04:00 12-11-2022\",\"time\":\"3\"}";
         data.getOrSetMessageFromServer(false, msg);
     }
 }
