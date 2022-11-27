@@ -1,23 +1,34 @@
 package mk.trafficgenerator5g;
 
+import android.app.DownloadManager;
+import android.content.Context;
 import android.util.Log;
+import android.app.DownloadManager;
+import android.app.Service;
+import android.content.Context;
 
 import org.json.JSONException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Data {
 
-    public String serverIP;
-
     private static boolean shouldThreadsBeGoing = true;
-    private final ActivityToStart emptyActivityToStart = new ActivityToStart();
     public static final int APPLICATION_TYPE_CANCEL = 0;
     public static final int APPLICATION_TYPE_YT = 1;
     public static final int APPLICATION_TYPE_CHROME = 2;
     public static final int APPLICATION_TYPE_MAPS = 3;
     public static final int APPLICATION_TYPE_DOWNLOAD = 4;
+    public static int STARTED_ACTIVITY = 0;
+
+    public String serverIP;
+    private final ActivityToStart emptyActivityToStart = new ActivityToStart();
+
+    // Download files stuff
+    ArrayList<Long> downloadingFilesIDs = new ArrayList<Long>();
+    DownloadManager manager;
 
     // Singleton stuff
     private final static Data INSTANCE = new Data();

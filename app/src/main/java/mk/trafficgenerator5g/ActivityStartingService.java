@@ -19,6 +19,7 @@ public class ActivityStartingService extends Service {
     public void onCreate() {
         super.onCreate();
         data = Data.getInstance();
+        data.manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
     }
 
     @Override
@@ -26,12 +27,6 @@ public class ActivityStartingService extends Service {
         new Thread(() -> {
             Intent subIntent = new Intent(Intent.ACTION_VIEW);
             subIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            subIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-//            data.subIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            data.subIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//            data.subIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//            data.subIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//            subIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             subIntent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             while (Data.getShouldThreadsBeGoing()) {
                 SystemClock.sleep(THREAD_SLEEP_TIME_SEC * 1000);
@@ -47,33 +42,59 @@ public class ActivityStartingService extends Service {
                     switch (message.type) {
                         case Data.APPLICATION_TYPE_CANCEL:
                             Log.d("DUPA", "ActivityStartingService -> CASE 0");
-                            subIntent.setClass(getApplicationContext(), EmptyActivity.class);
+                            if (Data.STARTED_ACTIVITY == Data.APPLICATION_TYPE_CANCEL) {
+                                break;
+                            }
+                            Data.STARTED_ACTIVITY = Data.APPLICATION_TYPE_CANCEL;
+                            for (long ele : data.downloadingFilesIDs) {
+                                data.manager.remove(ele);
+                            }
+                            startEmptyActivity(subIntent);
                             break;
+
                         case Data.APPLICATION_TYPE_YT:
                             Log.d("DUPA", "ActivityStartingService -> CASE 1");
+                            if (Data.STARTED_ACTIVITY == Data.APPLICATION_TYPE_YT) {
+                                startEmptyActivity(subIntent);
+                                SystemClock.sleep(5000);
+                            }
+                            Data.STARTED_ACTIVITY = Data.APPLICATION_TYPE_YT;
                             subIntent.setClass(getApplicationContext(), YoutubeActivity.class);
                             break;
+// TODO
                         case Data.APPLICATION_TYPE_CHROME:
                             Log.d("DUPA", "ActivityStartingService -> CASE 2");
+                            if (Data.STARTED_ACTIVITY == Data.APPLICATION_TYPE_CHROME) {
+                                startEmptyActivity(subIntent);
+                                SystemClock.sleep(5000);
+                            }
+                            Data.STARTED_ACTIVITY = Data.APPLICATION_TYPE_CHROME;
                             subIntent.setPackage("com.android.chrome");
                             break;
+
                         case Data.APPLICATION_TYPE_MAPS:
                             Log.d("DUPA", "ActivityStartingService -> CASE 3");
-                            subIntent.setPackage("com.google.android.apps.maps");
+                            if (Data.STARTED_ACTIVITY == Data.APPLICATION_TYPE_MAPS) {
+                                startEmptyActivity(subIntent);
+                                SystemClock.sleep(5000);
+                            }
+                            Data.STARTED_ACTIVITY = Data.APPLICATION_TYPE_MAPS;
+                            subIntent.setClass(getApplicationContext(), MapsActivity.class);
                             break;
+
                         case Data.APPLICATION_TYPE_DOWNLOAD:
                             Log.d("DUPA", "ActivityStartingService -> CASE 4");
-                            DownloadManager manager;
-                            manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
                             Uri uri = Uri.parse(message.url);
                             DownloadManager.Request request = new DownloadManager.Request(uri);
                             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-                            long reference = manager.enqueue(request);
+                            long reference = data.manager.enqueue(request);
+                            data.downloadingFilesIDs.add(reference);
                         break;
+
                         default:
                             Log.d("DUPA", "ActivityStartingService -> CASE DEFAULT");
                     }
-                    if (message.type != Data.APPLICATION_TYPE_DOWNLOAD) {
+                    if (message.type != Data.APPLICATION_TYPE_DOWNLOAD && message.type != Data.APPLICATION_TYPE_CANCEL) {
                         startActivity(subIntent);
                     }
                 }
@@ -86,5 +107,10 @@ public class ActivityStartingService extends Service {
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private void startEmptyActivity(Intent subIntent) {
+        subIntent.setClass(getApplicationContext(), EmptyActivity.class);
+        startActivity(subIntent);
     }
 }

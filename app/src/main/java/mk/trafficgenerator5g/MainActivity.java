@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void createSomeQueue() {
         String msg = "";
-        msg = "{\"index\":\"1\",\"url\":\"https://releases.ubuntu.com/22.04.1/ubuntu-22.04.1-desktop-amd64.iso\",\"type\":\"4\",\"startTime\":\"15:00:00 12-11-2022\",\"time\":\"0\"}";
+        msg = "{\"index\":\"1\",\"url\":\"https://cdimage.ubuntu.com/kubuntu/releases/22.10/release/kubuntu-22.10-desktop-amd64.iso\",\"type\":\"4\",\"startTime\":\"15:00:00 12-11-2022\",\"time\":\"0\"}";
         data.getOrSetMessageFromServer(false, msg);
 //        msg = "{\"index\":\"1\",\"url\":\"https://pl.wikipedia.org/wiki/Generator_liczb_losowych\",\"type\":\"2\",\"startTime\":\"15:01:00 12-11-2022\",\"time\":\"0\"}";
 //        data.getOrSetMessageFromServer(false, msg);
