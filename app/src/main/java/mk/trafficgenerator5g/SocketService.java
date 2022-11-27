@@ -14,7 +14,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class SocketService extends Service {
-    private final int THREAD_SLEEP_TIME_SEC = 5;
+    private final int THREAD_SLEEP_TIME_SEC = 10;
     Data data;
     Socket socket;
     PrintWriter out;

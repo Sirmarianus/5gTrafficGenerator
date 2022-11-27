@@ -11,7 +11,7 @@ import android.util.Log;
 
 public class ActivityStartingService extends Service {
     Data data;
-    private static final int THREAD_SLEEP_TIME_SEC = 7;
+    private static final int THREAD_SLEEP_TIME_SEC = 10;
 
     public ActivityStartingService() {}
 
@@ -105,7 +105,6 @@ public class ActivityStartingService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

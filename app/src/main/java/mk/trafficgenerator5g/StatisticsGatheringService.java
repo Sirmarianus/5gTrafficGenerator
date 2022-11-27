@@ -23,6 +23,7 @@ public class StatisticsGatheringService extends Service {
                     while (Data.getShouldThreadsBeGoing()) {
                         SystemClock.sleep(THREAD_SLEEP_TIME_SEC * 1000);
                         getStatistics();
+                        // TODO save statistics to file
                     }
                 }
         ).start();

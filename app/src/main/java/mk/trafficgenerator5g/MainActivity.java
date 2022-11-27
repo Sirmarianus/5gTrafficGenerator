@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         connect.setOnClickListener(view -> {
             String serverIp = srv_ip.getText().toString();
             if (isIPAddressCorrect(serverIp)) {
+                data.serverIP = serverIp;
                 createSomeQueue();
 //                startService(new Intent(this, SocketService.class));
                 startService(new Intent(this, StatisticsGatheringService.class));
