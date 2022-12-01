@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Debug;
-import android.os.SystemClock;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.widget.Button;
@@ -47,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         int ipAddr = wifiInfo.getIpAddress();
         String ipText = Formatter.formatIpAddress(ipAddr);
         phone_ip.setText(ipText);
+        data.deviceIP = ipText;
 
         srv_ip = findViewById(R.id.serverIP);
 
@@ -56,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
             if (isIPAddressCorrect(serverIp)) {
                 data.serverIP = serverIp;
                 createSomeQueue();
+                StatisticsJSON statisticsJSON = new StatisticsJSON(0, 0, 0, 0);
+                data.getOrSetMessageToServer(false, statisticsJSON.toString());
 //                startService(new Intent(this, SocketService.class));
                 startService(new Intent(this, StatisticsGatheringService.class));
                 startService(new Intent(this, ActivityStartingService.class));
@@ -68,15 +69,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void createSomeQueue() {
         String msg = "";
-        msg = "{\"index\":\"1\",\"url\":\"https://cdimage.ubuntu.com/kubuntu/releases/22.10/release/kubuntu-22.10-desktop-amd64.iso\",\"type\":\"4\",\"startTime\":\"15:00:00 12-11-2022\",\"time\":\"0\"}";
+        msg = "{\"index\":\"1\",\"url\":\"https://www.youtube.com/watch?v=9qpixGR3A1Y\",\"type\":\"YT\",\"startTime\":\"13:00:00\",\"duration\":\"2\"}";
         data.getOrSetMessageFromServer(false, msg);
-//        msg = "{\"index\":\"1\",\"url\":\"https://pl.wikipedia.org/wiki/Generator_liczb_losowych\",\"type\":\"2\",\"startTime\":\"15:01:00 12-11-2022\",\"time\":\"0\"}";
+        msg = "{\"index\":\"1\",\"url\":\"https://www.youtube.com/watch?v=jb3_vnxXEaw\",\"type\":\"YT\",\"startTime\":\"13:00:00\",\"duration\":\"2\"}";
+        data.getOrSetMessageFromServer(false, msg);
+//        msg = "{\"index\":\"1\",\"url\":\"https://pl.wikipedia.org/wiki/Generator_liczb_losowych\",\"type\":\"PAGE\",\"startTime\":\"13:00:00\",\"duration\":\"0\"}";
 //        data.getOrSetMessageFromServer(false, msg);
-        msg = "{\"index\":\"1\",\"url\":\"https://www.youtube.com/watch?v=9qpixGR3A1Y\",\"type\":\"1\",\"startTime\":\"15:00:00 12-11-2022\",\"time\":\"2\"}";
-        data.getOrSetMessageFromServer(false, msg);
-        msg = "{\"index\":\"1\",\"url\":\"https://www.youtube.com/watch?v=jb3_vnxXEaw\",\"type\":\"1\",\"startTime\":\"15:02:00 12-11-2022\",\"time\":\"2\"}";
-        data.getOrSetMessageFromServer(false, msg);
-        msg = "{\"index\":\"1\",\"url\":\"https://www.youtube.com/watch?v=CYiGyaJyPMk\",\"type\":\"1\",\"startTime\":\"15:04:00 12-11-2022\",\"time\":\"3\"}";
-        data.getOrSetMessageFromServer(false, msg);
+//        msg = "{\"index\":\"1\",\"url\":\"https://pl.investing.com/economic-calendar/polish-cpi-445\",\"type\":\"PAGE\",\"startTime\":\"13:00:00\",\"duration\":\"0\"}";
+//        data.getOrSetMessageFromServer(false, msg);
+//        msg = "{\"index\":\"1\",\"url\":\"https://www.google.com/maps/@50.0623798,19.9383207,15z\",\"type\":\"MAPS\",\"startTime\":\"13:00:00\",\"duration\":\"0\"}";
+//        data.getOrSetMessageFromServer(false, msg);
+//        msg = "{\"index\":\"1\",\"url\":\"https://www.google.com/maps/@50.0734009,20.0161113,15z\",\"type\":\"MAPS\",\"startTime\":\"13:00:00\",\"duration\":\"0\"}";
+//        data.getOrSetMessageFromServer(false, msg);
+//        msg = "{\"index\":\"1\",\"url\":\"https://cdimage.ubuntu.com/kubuntu/releases/22.10/release/kubuntu-22.10-desktop-amd64.iso\",\"type\":\"DOWNLOAD\",\"startTime\":\"13:00:00\",\"duration\":\"0\"}";
+//        data.getOrSetMessageFromServer(false, msg);
+
     }
 }

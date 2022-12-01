@@ -9,7 +9,6 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -58,15 +57,6 @@ public class SocketService extends Service {
         }
     }
 
-    private String receiveMessageFromServerJAVA() {
-        try {
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            return ois.readObject().toString();
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
     private void sendMessageToServer(String message) {
         Log.d("DUPA", "SocketThread -> Sending message");
         out.println(message);
@@ -80,16 +70,19 @@ public class SocketService extends Service {
                     createSocketConnection();
                     while (Data.getShouldThreadsBeGoing()) {
                         SystemClock.sleep(THREAD_SLEEP_TIME_SEC * 1000);
-                        sendMessageToServer("DUPA I TEGO TYPU");
-                        String msg = receiveMessageFromServer();
-//                        String msg = receiveMessageFromServerJAVA();
 
-                        Log.d("DUPA", "SocketThread -> Message from server");
-                        msg = msg.equals("") ? "EMPTY MESSAGE" : msg;
-                        Log.d("DUPA", msg);
+                        String msgToServer = data.getOrSetMessageToServer(true, "");
+                        if (!msgToServer.equals("")) {
+                            sendMessageToServer(msgToServer);
+                        }
+                        Log.d("DUPA", "MessageToServer: " + msgToServer);
 
-                        data.getOrSetMessageFromServer(false, msg);
-//                        data.getOrSetMessageToMainActivity(false, msg);
+                        String msgFromServer = receiveMessageFromServer();
+                        if (!msgFromServer.equals("")) {
+                            data.getOrSetMessageFromServer(false, msgFromServer);
+                        }
+                        Log.d("DUPA", "MessageFromServer: " + msgFromServer);
+
                     }
                     try {
                         in.close();

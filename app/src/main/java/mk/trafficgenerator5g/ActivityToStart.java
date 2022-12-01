@@ -5,32 +5,31 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class ActivityToStart {
     String url = "";
-    int type;
-    LocalDateTime startTime;
-    int timeToEnd;
+    String type;
+    LocalTime startTime;
+    int duration;
 
     ActivityToStart() {}
     ActivityToStart(String initValues) throws JSONException {
         Log.d("DUPA", "ActivityToStart -> CREATE");
 
         JSONObject jsonObject = new JSONObject(initValues);
-        this.type = jsonObject.getInt("type");
+        this.type = jsonObject.getString("type");
         this.url = jsonObject.getString("url");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy");
-        this.startTime = LocalDateTime.parse(jsonObject.getString("startTime"), formatter);
+        this.startTime = LocalTime.parse(jsonObject.getString("startTime"), DateTimeFormatter.ISO_TIME);
 
-        this.timeToEnd = jsonObject.getInt("time");
+        this.duration = jsonObject.getInt("duration");
 
         Log.d("DUPA", "ActivityToStart CREATED Activity");
         Log.d("DUPA", "Type -> " + this.type);
         Log.d("DUPA", "URL -> " + this.url);
         Log.d("DUPA", "StartTime -> " + this.startTime);
-        Log.d("DUPA", "Time -> " + this.timeToEnd);
+        Log.d("DUPA", "Duration -> " + this.duration);
     }
 }

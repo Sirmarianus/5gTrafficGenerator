@@ -36,13 +36,13 @@ public class ActivityStartingService extends Service {
                 } else {
                     Log.d("DUPA", "ActivityStartingService -> message");
                     Log.d("DUPA", "type: " + message.type + ", url: " + message.url);
-                    Log.d("DUPA", "startTime: " + message.startTime + ", time: " + message.timeToEnd);
+                    Log.d("DUPA", "startTime: " + message.startTime + ", duration: " + message.duration);
 
                     subIntent.setData(Uri.parse(message.url));
                     switch (message.type) {
                         case Data.APPLICATION_TYPE_CANCEL:
                             Log.d("DUPA", "ActivityStartingService -> CASE 0");
-                            if (Data.STARTED_ACTIVITY == Data.APPLICATION_TYPE_CANCEL) {
+                            if (Data.STARTED_ACTIVITY.equals(Data.APPLICATION_TYPE_CANCEL)) {
                                 break;
                             }
                             Data.STARTED_ACTIVITY = Data.APPLICATION_TYPE_CANCEL;
@@ -54,27 +54,27 @@ public class ActivityStartingService extends Service {
 
                         case Data.APPLICATION_TYPE_YT:
                             Log.d("DUPA", "ActivityStartingService -> CASE 1");
-                            if (Data.STARTED_ACTIVITY == Data.APPLICATION_TYPE_YT) {
+                            if (Data.STARTED_ACTIVITY.equals(Data.APPLICATION_TYPE_YT)) {
                                 startEmptyActivity(subIntent);
                                 SystemClock.sleep(5000);
                             }
                             Data.STARTED_ACTIVITY = Data.APPLICATION_TYPE_YT;
                             subIntent.setClass(getApplicationContext(), YoutubeActivity.class);
                             break;
-// TODO
-                        case Data.APPLICATION_TYPE_CHROME:
+
+                        case Data.APPLICATION_TYPE_PAGE:
                             Log.d("DUPA", "ActivityStartingService -> CASE 2");
-                            if (Data.STARTED_ACTIVITY == Data.APPLICATION_TYPE_CHROME) {
+                            if (Data.STARTED_ACTIVITY.equals(Data.APPLICATION_TYPE_PAGE)) {
                                 startEmptyActivity(subIntent);
                                 SystemClock.sleep(5000);
                             }
-                            Data.STARTED_ACTIVITY = Data.APPLICATION_TYPE_CHROME;
-                            subIntent.setPackage("com.android.chrome");
+                            Data.STARTED_ACTIVITY = Data.APPLICATION_TYPE_PAGE;
+                            subIntent.setClass(getApplicationContext(), WebViewActivity.class);
                             break;
 
                         case Data.APPLICATION_TYPE_MAPS:
                             Log.d("DUPA", "ActivityStartingService -> CASE 3");
-                            if (Data.STARTED_ACTIVITY == Data.APPLICATION_TYPE_MAPS) {
+                            if (Data.STARTED_ACTIVITY.equals(Data.APPLICATION_TYPE_MAPS)) {
                                 startEmptyActivity(subIntent);
                                 SystemClock.sleep(5000);
                             }
@@ -94,7 +94,7 @@ public class ActivityStartingService extends Service {
                         default:
                             Log.d("DUPA", "ActivityStartingService -> CASE DEFAULT");
                     }
-                    if (message.type != Data.APPLICATION_TYPE_DOWNLOAD && message.type != Data.APPLICATION_TYPE_CANCEL) {
+                    if (!message.type.equals(Data.APPLICATION_TYPE_DOWNLOAD) && !message.type.equals(Data.APPLICATION_TYPE_CANCEL)) {
                         startActivity(subIntent);
                     }
                 }

@@ -8,6 +8,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 public class StatisticsGatheringService extends Service {
+    Data data;
     private final int THREAD_SLEEP_TIME_SEC = 60;
     long totalRxBytes = TrafficStats.getTotalRxBytes();
     long totalRxPackets = TrafficStats.getTotalRxPackets();
@@ -17,6 +18,7 @@ public class StatisticsGatheringService extends Service {
     public StatisticsGatheringService() {}
 
     public int onStartCommand(Intent intent, int flags, int startId) {
+        data = Data.getInstance();
         Log.d("DUPA", "StatisticsGatheringService -> START");
         new Thread(
                 () -> {
@@ -45,6 +47,10 @@ public class StatisticsGatheringService extends Service {
         totalRxPackets = _totalRxPackets;
         totalTxBytes = _totalTxBytes;
         totalTxPackets = _totalTxPackets;
+
+        StatisticsJSON statisticsJSON = new StatisticsJSON(deltaRxBytes, deltaRxPackets, deltaTxBytes, deltaTxPackets);
+        data.getOrSetMessageToServer(false, statisticsJSON.toString());
+
 
         Log.e("DUPA", "deltaRxBytes: " + deltaRxBytes);
         Log.e("DUPA", "deltaRxPackets: " + deltaRxPackets);

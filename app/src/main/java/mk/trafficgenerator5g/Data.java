@@ -5,7 +5,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -13,15 +13,18 @@ public class Data {
 
     private static boolean shouldThreadsBeGoing = true;
 
-    public static final int APPLICATION_TYPE_CANCEL = 0;
-    public static final int APPLICATION_TYPE_YT = 1;
-    public static final int APPLICATION_TYPE_CHROME = 2;
-    public static final int APPLICATION_TYPE_MAPS = 3;
-    public static final int APPLICATION_TYPE_DOWNLOAD = 4;
+    public static final String APPLICATION_TYPE_CANCEL = "CANCEL";
+    public static final String APPLICATION_TYPE_YT = "YT";
+    public static final String APPLICATION_TYPE_PAGE = "PAGE";
+    public static final String APPLICATION_TYPE_MAPS = "MAPS";
+    public static final String APPLICATION_TYPE_DOWNLOAD = "DOWNLOAD";
 
-    public static int STARTED_ACTIVITY = 0;
+    public static String STARTED_ACTIVITY = "";
 
     public String serverIP;
+    public String deviceIP;
+    public String deviceMAC = "00:0A:E6:3E:FD:E1";
+    public String deviceName = "Legio";
 
     private final ActivityToStart emptyActivityToStart = new ActivityToStart();
 
@@ -38,12 +41,12 @@ public class Data {
     // Handling messages from Server to app
     private final LinkedList<ActivityToStart> messagesFromServer = new LinkedList<>();
     public synchronized ActivityToStart getOrSetMessageFromServer(boolean isMethodUsedAsGetter, String message) {
-        Log.e("Queue size: ", String.valueOf(messagesFromServer.size()));
+        Log.e("Queue1 size: ", String.valueOf(messagesFromServer.size()));
         for (ActivityToStart ele : messagesFromServer) {
-            Log.e("Queue type: ", String.valueOf(ele.type));
+            Log.e("Queue1 type: ", String.valueOf(ele.type));
         }
         if (isMethodUsedAsGetter) {
-            if (this.messagesFromServer.isEmpty() || messagesFromServer.getFirst().startTime.isAfter(LocalDateTime.now())) {
+            if (this.messagesFromServer.isEmpty() || messagesFromServer.getFirst().startTime.isAfter(LocalTime.now())) {
                 return emptyActivityToStart;
             }
             else {
@@ -58,14 +61,14 @@ public class Data {
                 return emptyActivityToStart;
             }
             addToQueue(activityToStartToBeSet);
-            if (activityToStartToBeSet.timeToEnd != 0) {
-                LocalDateTime startTime = activityToStartToBeSet.startTime.plusMinutes(activityToStartToBeSet.timeToEnd);
+            if (activityToStartToBeSet.duration != 0) {
+                LocalTime startTime = activityToStartToBeSet.startTime.plusMinutes(activityToStartToBeSet.duration);
 
                 activityToStartToBeSet = new ActivityToStart();
                 activityToStartToBeSet.url = "CANCEL";
                 activityToStartToBeSet.type = APPLICATION_TYPE_CANCEL;
                 activityToStartToBeSet.startTime = startTime;
-                activityToStartToBeSet.timeToEnd = 0;
+                activityToStartToBeSet.duration = 0;
                 addToQueue(activityToStartToBeSet);
                 clearQueueFromNotNeededStoppers();
             }
@@ -81,7 +84,7 @@ public class Data {
             if (messagesFromServer.getLast().startTime.isBefore(activityToStartToBeSet.startTime)) {
                 messagesFromServer.addLast(activityToStartToBeSet);
             }
-            else if (messagesFromServer.getLast().startTime.isEqual(activityToStartToBeSet.startTime)) {
+            else if (messagesFromServer.getLast().startTime.equals(activityToStartToBeSet.startTime)) {
                 activityToStartToBeSet.startTime.plusMinutes(1);
                 messagesFromServer.addLast(activityToStartToBeSet);
             }
@@ -90,7 +93,7 @@ public class Data {
                     if (messagesFromServer.get(i).startTime.isAfter(activityToStartToBeSet.startTime)) {
                         messagesFromServer.add(i, activityToStartToBeSet);
                     }
-                    else if (messagesFromServer.get(i).startTime.isEqual(activityToStartToBeSet.startTime)) {
+                    else if (messagesFromServer.get(i).startTime.equals(activityToStartToBeSet.startTime)) {
                         activityToStartToBeSet.startTime.plusMinutes(1);
                         messagesFromServer.add(i, activityToStartToBeSet);
                     }
@@ -101,11 +104,29 @@ public class Data {
 
     private void clearQueueFromNotNeededStoppers() {
         for (int i=messagesFromServer.size()-1; i>0; i--) {
-            if (messagesFromServer.get(i).type == APPLICATION_TYPE_CANCEL) {
-                if (messagesFromServer.get(i-1).type != APPLICATION_TYPE_YT) {
+            if (messagesFromServer.get(i).type.equals(APPLICATION_TYPE_CANCEL)) {
+                if (!messagesFromServer.get(i-1).type.equals(APPLICATION_TYPE_YT)) {
                     messagesFromServer.remove(i);
                 }
             }
+        }
+    }
+
+    // Handling messages to Server from app
+    private final LinkedList<String> messagesToServer = new LinkedList<>();
+    public synchronized String getOrSetMessageToServer(boolean isMethodUsedAsGetter, String message) {
+        Log.e("Queue2 size: ", String.valueOf(messagesToServer.size()));
+        if (isMethodUsedAsGetter) {
+            if (messagesToServer.isEmpty()) {
+                return "";
+            }
+            else {
+                return messagesToServer.poll();
+            }
+        }
+        else {
+            messagesToServer.addLast(message);
+            return "";
         }
     }
 }
