@@ -32,16 +32,16 @@ public class ActivityStartingService extends Service {
                 SystemClock.sleep(THREAD_SLEEP_TIME_SEC * 1000);
                 ActivityToStart message = data.getOrSetMessageFromServer(true, "");
                 if (message.url.equals("")) {
-                    Log.d("DUPA", "NOTHING TO START");
+                    Log.d("ActivityStartingService", "NOTHING TO START");
                 } else {
-                    Log.d("DUPA", "ActivityStartingService -> message");
-                    Log.d("DUPA", "type: " + message.type + ", url: " + message.url);
-                    Log.d("DUPA", "startTime: " + message.startTime + ", duration: " + message.duration);
+                    Log.d("ActivityStartingService", "message");
+                    Log.d("ActivityStartingService", "type: " + message.type + ", url: " + message.url);
+                    Log.d("ActivityStartingService", "startTime: " + message.startTime + ", duration: " + message.duration);
 
                     subIntent.setData(Uri.parse(message.url));
                     switch (message.type) {
                         case Data.APPLICATION_TYPE_CANCEL:
-                            Log.d("DUPA", "ActivityStartingService -> CASE 0");
+                            Log.d("ActivityStartingService", "CASE CANCEL");
                             if (Data.STARTED_ACTIVITY.equals(Data.APPLICATION_TYPE_CANCEL)) {
                                 break;
                             }
@@ -53,7 +53,7 @@ public class ActivityStartingService extends Service {
                             break;
 
                         case Data.APPLICATION_TYPE_YT:
-                            Log.d("DUPA", "ActivityStartingService -> CASE 1");
+                            Log.d("ActivityStartingService", "CASE YT");
                             if (Data.STARTED_ACTIVITY.equals(Data.APPLICATION_TYPE_YT)) {
                                 startEmptyActivity(subIntent);
                                 SystemClock.sleep(5000);
@@ -63,7 +63,7 @@ public class ActivityStartingService extends Service {
                             break;
 
                         case Data.APPLICATION_TYPE_PAGE:
-                            Log.d("DUPA", "ActivityStartingService -> CASE 2");
+                            Log.d("ActivityStartingService", "CASE PAGE");
                             if (Data.STARTED_ACTIVITY.equals(Data.APPLICATION_TYPE_PAGE)) {
                                 startEmptyActivity(subIntent);
                                 SystemClock.sleep(5000);
@@ -73,7 +73,7 @@ public class ActivityStartingService extends Service {
                             break;
 
                         case Data.APPLICATION_TYPE_MAPS:
-                            Log.d("DUPA", "ActivityStartingService -> CASE 3");
+                            Log.d("ActivityStartingService", "CASE MAPS");
                             if (Data.STARTED_ACTIVITY.equals(Data.APPLICATION_TYPE_MAPS)) {
                                 startEmptyActivity(subIntent);
                                 SystemClock.sleep(5000);
@@ -83,7 +83,7 @@ public class ActivityStartingService extends Service {
                             break;
 
                         case Data.APPLICATION_TYPE_DOWNLOAD:
-                            Log.d("DUPA", "ActivityStartingService -> CASE 4");
+                            Log.d("ActivityStartingService", "CASE DOWNLOAD");
                             Uri uri = Uri.parse(message.url);
                             DownloadManager.Request request = new DownloadManager.Request(uri);
                             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
@@ -92,7 +92,7 @@ public class ActivityStartingService extends Service {
                         break;
 
                         default:
-                            Log.d("DUPA", "ActivityStartingService -> CASE DEFAULT");
+                            Log.d("ActivityStartingService", "CASE DEFAULT");
                     }
                     if (!message.type.equals(Data.APPLICATION_TYPE_DOWNLOAD) && !message.type.equals(Data.APPLICATION_TYPE_CANCEL)) {
                         startActivity(subIntent);

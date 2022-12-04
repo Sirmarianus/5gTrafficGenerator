@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 
+import java.io.File;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,11 +14,11 @@ public class Data {
 
     private static boolean shouldThreadsBeGoing = true;
 
-    public static final String APPLICATION_TYPE_CANCEL = "CANCEL";
+    public static final String APPLICATION_TYPE_CANCEL = "Cancel";
     public static final String APPLICATION_TYPE_YT = "YT";
-    public static final String APPLICATION_TYPE_PAGE = "PAGE";
-    public static final String APPLICATION_TYPE_MAPS = "MAPS";
-    public static final String APPLICATION_TYPE_DOWNLOAD = "DOWNLOAD";
+    public static final String APPLICATION_TYPE_PAGE = "Page";
+    public static final String APPLICATION_TYPE_MAPS = "Maps";
+    public static final String APPLICATION_TYPE_DOWNLOAD = "Download";
 
     public static String STARTED_ACTIVITY = "";
 
@@ -41,16 +42,20 @@ public class Data {
     // Handling messages from Server to app
     private final LinkedList<ActivityToStart> messagesFromServer = new LinkedList<>();
     public synchronized ActivityToStart getOrSetMessageFromServer(boolean isMethodUsedAsGetter, String message) {
-        Log.e("Queue1 size: ", String.valueOf(messagesFromServer.size()));
+        Log.e("Queue1 size", String.valueOf(messagesFromServer.size()));
         for (ActivityToStart ele : messagesFromServer) {
-            Log.e("Queue1 type: ", String.valueOf(ele.type));
+            Log.e("Queue1 type", ele.type + " -> " + ele.startTime);
         }
         if (isMethodUsedAsGetter) {
-            if (this.messagesFromServer.isEmpty() || messagesFromServer.getFirst().startTime.isAfter(LocalTime.now())) {
+            if (this.messagesFromServer.isEmpty()) {
                 return emptyActivityToStart;
             }
             else {
-                return messagesFromServer.poll();
+                if (messagesFromServer.getFirst().startTime.isAfter(LocalTime.now())) {
+                    return emptyActivityToStart;
+                } else {
+                    return messagesFromServer.poll();
+                }
             }
         }
         else{
@@ -80,30 +85,23 @@ public class Data {
         if (messagesFromServer.isEmpty()) {
             messagesFromServer.addLast(activityToStartToBeSet);
         }
+        else if (!activityToStartToBeSet.startTime.isBefore(messagesFromServer.getLast().startTime)) {
+            messagesFromServer.addLast(activityToStartToBeSet);
+        }
         else {
-            if (messagesFromServer.getLast().startTime.isBefore(activityToStartToBeSet.startTime)) {
-                messagesFromServer.addLast(activityToStartToBeSet);
-            }
-            else if (messagesFromServer.getLast().startTime.equals(activityToStartToBeSet.startTime)) {
-                activityToStartToBeSet.startTime.plusMinutes(1);
-                messagesFromServer.addLast(activityToStartToBeSet);
-            }
-            else {
-                for (int i = 0; i < messagesFromServer.size(); i++) {
-                    if (messagesFromServer.get(i).startTime.isAfter(activityToStartToBeSet.startTime)) {
-                        messagesFromServer.add(i, activityToStartToBeSet);
-                    }
-                    else if (messagesFromServer.get(i).startTime.equals(activityToStartToBeSet.startTime)) {
-                        activityToStartToBeSet.startTime.plusMinutes(1);
-                        messagesFromServer.add(i, activityToStartToBeSet);
-                    }
+            int messagesFromServerSize = messagesFromServer.size();
+            for (int i=0; i<messagesFromServerSize; i++) {
+                if (!activityToStartToBeSet.startTime.isAfter(messagesFromServer.get(i).startTime)) {
+                    messagesFromServer.add(i, activityToStartToBeSet);
+                    break;
                 }
             }
         }
     }
 
     private void clearQueueFromNotNeededStoppers() {
-        for (int i=messagesFromServer.size()-1; i>0; i--) {
+        int messagesFromServerSize = messagesFromServer.size();
+        for (int i=messagesFromServerSize-1; i>0; i--) {
             if (messagesFromServer.get(i).type.equals(APPLICATION_TYPE_CANCEL)) {
                 if (!messagesFromServer.get(i-1).type.equals(APPLICATION_TYPE_YT)) {
                     messagesFromServer.remove(i);

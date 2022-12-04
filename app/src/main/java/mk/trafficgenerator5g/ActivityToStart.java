@@ -14,9 +14,11 @@ public class ActivityToStart {
     LocalTime startTime;
     int duration;
 
-    ActivityToStart() {}
+    ActivityToStart() {
+        Log.d("ActivityToStart", "CREATE EMPTY");
+    }
     ActivityToStart(String initValues) throws JSONException {
-        Log.d("DUPA", "ActivityToStart -> CREATE");
+        Log.d("ActivityToStart", "CREATE");
 
         JSONObject jsonObject = new JSONObject(initValues);
         this.type = jsonObject.getString("type");
@@ -26,10 +28,10 @@ public class ActivityToStart {
 
         this.duration = jsonObject.getInt("duration");
 
-        Log.d("DUPA", "ActivityToStart CREATED Activity");
-        Log.d("DUPA", "Type -> " + this.type);
-        Log.d("DUPA", "URL -> " + this.url);
-        Log.d("DUPA", "StartTime -> " + this.startTime);
-        Log.d("DUPA", "Duration -> " + this.duration);
+        Log.d("ActivityToStart", "CREATED Activity");
+        Log.d("ActivityToStart", "Type -> " + this.type);
+        Log.d("ActivityToStart", "URL -> " + this.url);
+        Log.d("ActivityToStart", "StartTime -> " + this.startTime);
+        Log.d("ActivityToStart", "Duration -> " + this.duration);
     }
 }

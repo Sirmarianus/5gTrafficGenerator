@@ -24,15 +24,15 @@ public class YoutubeActivity extends YouTubeBaseActivity {
         onInitializedListener = new YouTubePlayer.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
-                Log.d("DUPA", "YoutubeActivity -> onInitializationSuccess");
+                Log.d("YoutubeActivity", "onInitializationSuccess");
                 player.loadVideo(getYoutubeVideoFromUrl(url));
                 player.play();
             }
 
             @Override
             public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult error) {
-                Log.d("DUPA", "YoutubeActivity -> onInitializationFailure");
-                Log.d("DUPA", String.valueOf(error));
+                Log.d("YoutubeActivity", "onInitializationFailure");
+                Log.d("YoutubeActivity", String.valueOf(error));
             }
         });
     }

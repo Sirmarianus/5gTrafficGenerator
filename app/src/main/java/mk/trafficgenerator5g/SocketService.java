@@ -28,17 +28,17 @@ public class SocketService extends Service {
     }
 
     private void createSocketConnection() {
-        Log.d("DUPA", "SocketService -> RUN");
+        Log.d("SocketService", "RUN");
         try {
-            Log.d("DUPA", data.serverIP);
+            Log.d("SocketService", data.serverIP);
             socket = new Socket(data.serverIP, 5001);
-            Log.d("DUPA", "A");
+            Log.d("SocketService", "A");
             out = new PrintWriter(socket.getOutputStream(), true);
-            Log.d("DUPA", "B");
+            Log.d("SocketService", "B");
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            Log.d("DUPA", "C");
+            Log.d("SocketService", "C");
         } catch (Exception e) {
-            Log.d("DUPA", String.valueOf(e));
+            Log.d("SocketService", String.valueOf(e));
             Data.stopServices();
         }
     }
@@ -52,19 +52,19 @@ public class SocketService extends Service {
             }
             return message.toString();
         } catch (IOException e) {
-            Log.d("DUPA", "receiveMessageFromServer -> " + e);
+            Log.d("SocketService", "receiveMessageFromServer -> " + e);
             return "";
         }
     }
 
     private void sendMessageToServer(String message) {
-        Log.d("DUPA", "SocketThread -> Sending message");
+        Log.d("SocketService", "SocketThread -> Sending message");
         out.println(message);
-        Log.d("DUPA", "SocketThread -> Message sent");
+        Log.d("SocketService", "SocketThread -> Message sent");
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("DUPA", "SocketService -> START");
+        Log.d("SocketService", "SocketService -> START");
         new Thread(
                 () -> {
                     createSocketConnection();
@@ -75,20 +75,20 @@ public class SocketService extends Service {
                         if (!msgToServer.equals("")) {
                             sendMessageToServer(msgToServer);
                         }
-                        Log.d("DUPA", "MessageToServer: " + msgToServer);
+                        Log.d("SocketService", "MessageToServer: " + msgToServer);
 
                         String msgFromServer = receiveMessageFromServer();
                         if (!msgFromServer.equals("")) {
                             data.getOrSetMessageFromServer(false, msgFromServer);
                         }
-                        Log.d("DUPA", "MessageFromServer: " + msgFromServer);
+                        Log.d("SocketService", "MessageFromServer: " + msgFromServer);
 
                     }
                     try {
                         in.close();
                         out.close();
                         socket.close();
-                        Log.d("DUPA", "SocketThread -> Closed socket");
+                        Log.d("SocketService", "Closed socket");
                     } catch (Exception ignored) {}
                 }
         ).start();

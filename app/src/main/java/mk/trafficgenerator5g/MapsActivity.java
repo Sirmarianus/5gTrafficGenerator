@@ -1,7 +1,7 @@
 package mk.trafficgenerator5g;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -12,29 +12,22 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-import mk.trafficgenerator5g.databinding.ActivityMapsBinding;
-
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
-    private GoogleMap mMap;
-    private ActivityMapsBinding binding;
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
 
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
     }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        mMap = googleMap;
         double latitude = 50.06;
         double longtitude = 19.94;
 
@@ -44,10 +37,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String [] llz = latLonZoom.split(",");
             latitude = Double.parseDouble(llz[0]);
             longtitude = Double.parseDouble(llz[1]);
-            Log.d("DUPA", "lat: " + latitude);
-            Log.d("DUPA", "lon: " + longtitude);
         }
+        Log.d("MapsActivity", "lat: " + latitude);
+        Log.d("MapsActivity", "lon: " + longtitude);
         LatLng sydney = new LatLng(latitude, longtitude);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }

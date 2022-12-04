@@ -3,9 +3,18 @@ package mk.trafficgenerator5g;
 import android.app.Service;
 import android.content.Intent;
 import android.net.TrafficStats;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
+
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class StatisticsGatheringService extends Service {
     Data data;
@@ -19,7 +28,7 @@ public class StatisticsGatheringService extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         data = Data.getInstance();
-        Log.d("DUPA", "StatisticsGatheringService -> START");
+        Log.d("StatisticsGatheringService", "START");
         new Thread(
                 () -> {
                     while (Data.getShouldThreadsBeGoing()) {
@@ -48,14 +57,39 @@ public class StatisticsGatheringService extends Service {
         totalTxBytes = _totalTxBytes;
         totalTxPackets = _totalTxPackets;
 
-        StatisticsJSON statisticsJSON = new StatisticsJSON(deltaRxBytes, deltaRxPackets, deltaTxBytes, deltaTxPackets);
+        JSONObject statisticsJSON = ParserJSON.createJsonWithStatistics(deltaRxBytes, deltaRxPackets, deltaTxBytes, deltaTxPackets);
+        assert statisticsJSON != null;
         data.getOrSetMessageToServer(false, statisticsJSON.toString());
 
+        String stats = deltaRxBytes + ";" + deltaRxPackets + ";" + deltaTxBytes + ";" + deltaTxPackets + "\n";
+        writeStatisticsToFile("trafficGenerator5g.txt", stats);
 
-        Log.e("DUPA", "deltaRxBytes: " + deltaRxBytes);
-        Log.e("DUPA", "deltaRxPackets: " + deltaRxPackets);
-        Log.e("DUPA", "deltaTxBytes: " + deltaTxBytes);
-        Log.e("DUPA", "deltaTxPackets: " + deltaTxPackets);
+
+        Log.e("StatisticsGatheringService", "deltaRxBytes: " + deltaRxBytes);
+        Log.e("StatisticsGatheringService", "deltaRxPackets: " + deltaRxPackets);
+        Log.e("StatisticsGatheringService", "deltaTxBytes: " + deltaTxBytes);
+        Log.e("StatisticsGatheringService", "deltaTxPackets: " + deltaTxPackets);
+    }
+
+    public void writeStatisticsToFile(String fileName, String content) {
+        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        Log.e("write", root + "/" + fileName);
+        File file = new File(root, fileName);
+        try {
+            if (!file.exists()) {
+                Log.e("create", "file");
+                file.createNewFile();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            FileOutputStream fout = new FileOutputStream(file, true);
+            fout.write(content.getBytes(StandardCharsets.UTF_8));
+            fout.close();
+        } catch (Exception e) {
+            Log.e("StatisticsGatheringService", e.toString());
+        }
     }
 
     @Override
