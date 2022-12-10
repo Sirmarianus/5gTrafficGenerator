@@ -94,7 +94,9 @@ public class ActivityStartingService extends Service {
                         default:
                             Log.d("ActivityStartingService", "CASE DEFAULT");
                     }
-                    if (!message.type.equals(Data.APPLICATION_TYPE_DOWNLOAD) && !message.type.equals(Data.APPLICATION_TYPE_CANCEL)) {
+                    if (message.type.equals(Data.APPLICATION_TYPE_YT) ||
+                            message.type.equals(Data.APPLICATION_TYPE_PAGE) ||
+                            message.type.equals(Data.APPLICATION_TYPE_MAPS) ) {
                         startActivity(subIntent);
                     }
                 }
